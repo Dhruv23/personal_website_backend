@@ -1,0 +1,48 @@
+{
+  "siteMetadata": {
+    "title": "Adhrin - Portfolio",
+    "description": "Full-stack Developer & UI/UX Designer",
+    "favicon": "/favicon.ico"
+  },
+  "user": {
+    "username": "Adhrin",
+    "status": "Building the future",
+    "avatarUrl": "https://avatars.githubusercontent.com/u/1024025?v=4",
+    "description": ["Full-Stack Developer", "UI/UX Designer", "Synthwave Enthusiast"],
+    "location": "Cyberspace",
+    "discordId": "306560934149226496",
+    "useDiscordAvatar": true
+  },
+  "theme": {
+    "profileOpacity": 60,
+    "profileBlur": 20,
+    "backgroundUrl": "https://images.unsplash.com/photo-1550684848-fac1c5b4e853?q=80&w=2070&auto=format&fit=crop",
+    "customCursorUrl": "https://raw.githubusercontent.com/Simjas/tail-kit/main/public/images/mouse-cursor.png",
+    "colors": {
+        "primary": "#d946ef",
+        "secondary": "#8b5cf6",
+        "accent": "#06b6d4",
+        "text": "#ffffff",
+        "background": "#0f172a",
+        "icon": "#ffffff"
+    },
+    "effects": {
+      "glow": true,
+      "backgroundBlur": true,
+      "animatedTitle": true,
+      "monochromeIcons": false
+    }
+  },
+  "socials": [
+    { "platform": "github", "url": "https://github.com/adhrin", "icon": "Github" },
+    { "platform": "discord", "url": "https://discord.gg/adhrin", "icon": "Discord" },
+    { "platform": "youtube", "url": "https://youtube.com/@adhrin", "icon": "Youtube" },
+    { "platform": "twitter", "url": "https://twitter.com/adhrin", "icon": "Twitter" }
+  ],
+  "music": {
+    "enabled": true,
+    "volume": 0.5,
+    "autoplay": false,
+    "url": "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3"
+  }
+}
