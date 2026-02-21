@@ -1,30 +1,47 @@
 'use client';
 
 import React, { createContext, useContext, useState, ReactNode } from 'react';
-import defaultConfig from '../../config.json';
 import { AppConfig } from '../types/config';
+import { updateConfig as updateServerConfig } from '../actions/config';
 
 interface ConfigContextType {
   config: AppConfig;
   updateConfig: (newConfig: Partial<AppConfig>) => void;
   resetConfig: () => void;
+  saveConfig: () => Promise<boolean>;
 }
 
 const ConfigContext = createContext<ConfigContextType | undefined>(undefined);
 
-export const ConfigProvider = ({ children }: { children: ReactNode }) => {
-  const [config, setConfig] = useState<AppConfig>(defaultConfig as unknown as AppConfig);
+export const ConfigProvider = ({
+    children,
+    initialConfig
+}: {
+    children: ReactNode,
+    initialConfig: AppConfig
+}) => {
+  const [config, setConfig] = useState<AppConfig>(initialConfig);
 
   const updateConfig = (newConfig: Partial<AppConfig>) => {
     setConfig((prev) => ({ ...prev, ...newConfig }));
   };
 
   const resetConfig = () => {
-    setConfig(defaultConfig as unknown as AppConfig);
+    setConfig(initialConfig);
   }
 
+  const saveConfig = async () => {
+    try {
+        const success = await updateServerConfig(config);
+        return success;
+    } catch (e) {
+        console.error("Failed to save config:", e);
+        return false;
+    }
+  };
+
   return (
-    <ConfigContext.Provider value={{ config, updateConfig, resetConfig }}>
+    <ConfigContext.Provider value={{ config, updateConfig, resetConfig, saveConfig }}>
       {children}
     </ConfigContext.Provider>
   );

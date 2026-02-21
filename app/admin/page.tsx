@@ -2,19 +2,48 @@
 
 import { useConfig } from '../contexts/ConfigContext';
 import { Background } from '../components/Background';
-import { RefreshCw, Save } from 'lucide-react';
+import { useState } from 'react';
+import { RefreshCw, Save, Upload } from 'lucide-react';
+import { supabase } from '../lib/supabase';
 
 export default function Admin() {
-  const { config, updateConfig, resetConfig } = useConfig();
+  const { config, updateConfig, resetConfig, saveConfig } = useConfig();
+  const [saving, setSaving] = useState(false);
+  const [uploading, setUploading] = useState<string | null>(null);
 
-  const handleExport = () => {
-    const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(config, null, 2));
-    const downloadAnchorNode = document.createElement('a');
-    downloadAnchorNode.setAttribute("href", dataStr);
-    downloadAnchorNode.setAttribute("download", "config.json");
-    document.body.appendChild(downloadAnchorNode);
-    downloadAnchorNode.click();
-    downloadAnchorNode.remove();
+  const handleSave = async () => {
+      setSaving(true);
+      const success = await saveConfig();
+      if (success) {
+          alert('Config saved to Supabase!');
+      } else {
+          alert('Failed to save config. Check console.');
+      }
+      setSaving(false);
+  };
+
+  const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>, path: string[], bucketPath: string) => {
+      if (!event.target.files || event.target.files.length === 0) return;
+      const file = event.target.files[0];
+      const fileExt = file.name.split('.').pop();
+      const fileName = `${Math.random().toString(36).substring(2, 15)}.${fileExt}`;
+      const filePath = `${bucketPath}/${fileName}`;
+
+      setUploading(bucketPath);
+
+      try {
+          const { error: uploadError } = await supabase.storage.from('media').upload(filePath, file);
+          if (uploadError) throw uploadError;
+
+          const { data: { publicUrl } } = supabase.storage.from('media').getPublicUrl(filePath);
+
+          updateNested(path, publicUrl);
+      } catch (error) {
+          console.error('Upload error:', error);
+          alert('Error uploading file!');
+      } finally {
+          setUploading(null);
+      }
   };
 
   const updateNested = (path: string[], value: string | number | boolean | string[]) => {
@@ -42,10 +71,11 @@ export default function Admin() {
                     <RefreshCw size={16} /> Reset
                 </button>
                 <button
-                    onClick={handleExport}
-                    className="flex items-center gap-2 px-4 py-2 rounded-lg bg-pink-500 text-white hover:bg-pink-600 transition-colors shadow-lg shadow-pink-500/20"
+                    onClick={handleSave}
+                    disabled={saving}
+                    className="flex items-center gap-2 px-4 py-2 rounded-lg bg-pink-500 text-white hover:bg-pink-600 transition-colors shadow-lg shadow-pink-500/20 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                    <Save size={16} /> Export Config
+                    {saving ? 'Saving...' : <><Save size={16} /> Save to Supabase</>}
                 </button>
             </div>
         </div>
@@ -58,7 +88,17 @@ export default function Admin() {
                     <Input label="Username" value={config.user.username} onChange={(v) => updateNested(['user', 'username'], v)} />
                     <Input label="Location" value={config.user.location} onChange={(v) => updateNested(['user', 'location'], v)} />
                     <Input label="Discord ID" value={config.user.discordId} onChange={(v) => updateNested(['user', 'discordId'], v)} />
-                    <Input label="Avatar URL" value={config.user.avatarUrl} onChange={(v) => updateNested(['user', 'avatarUrl'], v)} />
+
+                    <div>
+                        <Input label="Avatar URL" value={config.user.avatarUrl} onChange={(v) => updateNested(['user', 'avatarUrl'], v)} />
+                        <div className="mt-2">
+                             <FileInput
+                                label={uploading === 'avatars' ? "Uploading..." : "Upload Avatar"}
+                                onChange={(e) => handleFileUpload(e, ['user', 'avatarUrl'], 'avatars')}
+                            />
+                        </div>
+                    </div>
+
                     <div className="col-span-1 md:col-span-2 pt-2">
                          <Toggle label="Use Discord Avatar" checked={config.user.useDiscordAvatar} onChange={(v) => updateNested(['user', 'useDiscordAvatar'], v)} />
                     </div>
@@ -101,8 +141,25 @@ export default function Admin() {
             <section>
                 <h2 className="text-xl font-bold text-white mb-4 border-b border-white/10 pb-2">Theme & Appearance</h2>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <Input label="Background URL (Image/Video)" value={config.theme.backgroundUrl} onChange={(v) => updateNested(['theme', 'backgroundUrl'], v)} />
-                    <Input label="Custom Cursor URL" value={config.theme.customCursorUrl} onChange={(v) => updateNested(['theme', 'customCursorUrl'], v)} />
+                    <div>
+                        <Input label="Background URL (Image/Video)" value={config.theme.backgroundUrl} onChange={(v) => updateNested(['theme', 'backgroundUrl'], v)} />
+                        <div className="mt-2">
+                             <FileInput
+                                label={uploading === 'backgrounds' ? "Uploading..." : "Upload Background"}
+                                onChange={(e) => handleFileUpload(e, ['theme', 'backgroundUrl'], 'backgrounds')}
+                            />
+                        </div>
+                    </div>
+
+                    <div>
+                        <Input label="Custom Cursor URL" value={config.theme.customCursorUrl} onChange={(v) => updateNested(['theme', 'customCursorUrl'], v)} />
+                        <div className="mt-2">
+                             <FileInput
+                                label={uploading === 'cursors' ? "Uploading..." : "Upload Cursor"}
+                                onChange={(e) => handleFileUpload(e, ['theme', 'customCursorUrl'], 'cursors')}
+                            />
+                        </div>
+                    </div>
 
                     <div className="col-span-1 md:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div>
@@ -165,7 +222,16 @@ export default function Admin() {
              <section>
                 <h2 className="text-xl font-bold text-white mb-4 border-b border-white/10 pb-2">Music Player</h2>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <Input label="Music URL (MP3)" value={config.music.url} onChange={(v) => updateNested(['music', 'url'], v)} />
+                    <div>
+                        <Input label="Music URL (MP3)" value={config.music.url} onChange={(v) => updateNested(['music', 'url'], v)} />
+                        <div className="mt-2">
+                             <FileInput
+                                label={uploading === 'music' ? "Uploading..." : "Upload MP3"}
+                                onChange={(e) => handleFileUpload(e, ['music', 'url'], 'music')}
+                            />
+                        </div>
+                    </div>
+
                     <div className="flex items-end gap-4 pb-2">
                         <Toggle label="Enabled" checked={config.music.enabled} onChange={(v) => updateNested(['music', 'enabled'], v)} />
                         <Toggle label="Autoplay" checked={config.music.autoplay} onChange={(v) => updateNested(['music', 'autoplay'], v)} />
@@ -197,4 +263,12 @@ const Toggle = ({ label, checked, onChange }: { label: string, checked: boolean,
         </div>
         <span className="text-sm text-gray-300 capitalize">{label}</span>
     </div>
+);
+
+const FileInput = ({ label, onChange }: { label: string, onChange: (e: React.ChangeEvent<HTMLInputElement>) => void }) => (
+    <label className="flex items-center gap-2 cursor-pointer bg-white/5 hover:bg-white/10 border border-white/10 px-3 py-1.5 rounded-lg transition-colors text-xs text-gray-300">
+        <Upload size={14} />
+        {label}
+        <input type="file" className="hidden" onChange={onChange} />
+    </label>
 );
