@@ -128,8 +128,9 @@ export default function Admin() {
                                 </div>
                             </div>
 
-                            <div className="pt-6">
+                            <div className="pt-6 space-y-4">
                                 <Toggle label="Use Discord Avatar" checked={config.user.useDiscordAvatar} onChange={(v) => updateNested(['user', 'useDiscordAvatar'], v)} />
+                                <Toggle label="Show Discord Decoration" checked={config.user.showDiscordDecoration} onChange={(v) => updateNested(['user', 'showDiscordDecoration'], v)} />
                             </div>
                         </div>
 

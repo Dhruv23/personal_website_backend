@@ -12,6 +12,7 @@ export interface UserConfig {
   location: string;
   discordId: string;
   useDiscordAvatar: boolean;
+  showDiscordDecoration: boolean;
   offlineStatus: string;
 }
 

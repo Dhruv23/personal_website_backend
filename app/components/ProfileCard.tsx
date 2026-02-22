@@ -185,13 +185,15 @@ export const ProfileCard = () => {
                         )}
                     />
                     {/* Avatar Decoration */}
-                    <img
-                        src="https://cdn.discordapp.com/avatar-decoration-presets/a_62e8c50b3f9422e669ec20dd000e85c9.png"
-                        alt="Decoration"
-                        className="absolute -top-[7%] left-0 w-[114%] max-w-none pointer-events-none z-20"
-                    />
+                    {user.showDiscordDecoration && (
+                        <img
+                            src="https://cdn.discordapp.com/avatar-decoration-presets/a_62e8c50b3f9422e669ec20dd000e85c9.png"
+                            alt="Decoration"
+                            className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[120%] max-w-none pointer-events-none z-20"
+                        />
+                    )}
                     <div className={cn(
-                        "absolute bottom-2 right-2 w-6 h-6 rounded-full border-2 border-[#0f172a] z-30",
+                        "absolute bottom-[5%] right-[5%] w-6 h-6 rounded-full border-2 border-[#0f172a] z-30",
                         statusColor
                     )} />
                 </div>
