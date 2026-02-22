@@ -58,7 +58,7 @@ export async function getGitHubStats(username: string): Promise<GitHubStatsData 
     if (!data || !data.user) return null;
 
     const contributions = data.user.contributionsCollection.contributionCalendar.totalContributions;
-
+    
     let totalStars = 0;
     const languageCounts: Record<string, { count: number; color: string }> = {};
 
@@ -109,7 +109,7 @@ export async function getGitHubRepos(username: string): Promise<GitHubRepo[]> {
             },
             next: { revalidate: 3600 }
         });
-
+        
         if (!res.ok) return [];
 
         const repos = await res.json();

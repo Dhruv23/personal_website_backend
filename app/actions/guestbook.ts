@@ -27,7 +27,7 @@ export async function getGuestbookEntries(): Promise<GuestbookEntry[]> {
 export async function addGuestbookEntry(name: string, message: string): Promise<boolean> {
   // Simple validation
   if (!name || !message || name.length > 50 || message.length > 200) {
-      return false;
+    return false;
   }
 
   const { error } = await supabase

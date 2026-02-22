@@ -14,11 +14,11 @@ export const GitHubStats = () => {
 
   useEffect(() => {
     if (github?.statsWidget && github.username) {
-        getGitHubStats(github.username).then(setStats);
+      getGitHubStats(github.username).then(setStats);
     } else if (github?.statsWidget && user.username) {
-        // Fallback to user.username if github.username is not set or empty?
-        // Although config usually has github.username separate.
-        getGitHubStats(user.username).then(setStats);
+      // Fallback to user.username if github.username is not set or empty? 
+      // Although config usually has github.username separate.
+      getGitHubStats(user.username).then(setStats);
     }
   }, [github?.statsWidget, github?.username, user.username]);
 
