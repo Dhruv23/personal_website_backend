@@ -164,7 +164,7 @@ export const ProfileCard = () => {
     const cardContent = (
         <div
             className={cn(
-                "relative z-10 w-full p-6 rounded-2xl border border-white/10 shadow-2xl backdrop-blur-md overflow-hidden",
+                "relative z-10 w-full p-6 rounded-2xl border border-white/10 shadow-2xl backdrop-blur-md",
                 theme.effects.glow && "shadow-[0_0_50px_-12px_rgba(217,70,239,0.5)] border-pink-500/20"
             )}
             style={{
@@ -180,18 +180,16 @@ export const ProfileCard = () => {
                              : user.avatarUrl}
                         alt="Avatar"
                         className={cn(
-                            "w-32 h-32 rounded-full border-4 border-white/10 shadow-lg object-cover transition-transform duration-300 group-hover:scale-105",
+                            "relative z-10 w-32 h-32 rounded-full border-4 border-white/10 shadow-lg object-cover transition-transform duration-300 group-hover:scale-105",
                             theme.effects.glow && "shadow-[0_0_30px_-5px_rgba(217,70,239,0.6)]"
                         )}
                     />
                     {/* Avatar Decoration */}
-                    {lanyardData?.discord_user?.avatar_decoration_data?.asset && (
-                        <img
-                            src={`https://cdn.discordapp.com/avatar-decorations/${lanyardData.discord_user.id}/${lanyardData.discord_user.avatar_decoration_data.asset}.png`}
-                            alt="Decoration"
-                            className="absolute inset-0 w-full h-full scale-[1.2] pointer-events-none z-20"
-                        />
-                    )}
+                    <img
+                        src="https://cdn.discordapp.com/avatar-decorations/478704937501458432/a_62e8c50b3f9422e669ec20dd000e85c9.png"
+                        alt="Decoration"
+                        className="absolute w-[120%] h-[120%] -top-[10%] -left-[10%] pointer-events-none z-20"
+                    />
                     <div className={cn(
                         "absolute bottom-2 right-2 w-6 h-6 rounded-full border-2 border-[#0f172a] z-30",
                         statusColor
