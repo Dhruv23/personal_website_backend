@@ -52,6 +52,7 @@ export default function Admin() {
     const newConfig = JSON.parse(JSON.stringify(config));
     let current = newConfig;
     for (let i = 0; i < path.length - 1; i++) {
+        if (!current[path[i]]) current[path[i]] = {}; // Safely initialize missing nested objects
         current = current[path[i]];
     }
     current[path[path.length - 1]] = value;
@@ -202,7 +203,17 @@ export default function Admin() {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <Input label="GitHub Username (for stats)" value={config.github?.username || ''} onChange={(v) => updateNested(['github', 'username'], v)} />
                     <div className="pt-6">
-                        <Toggle label="Show Stats Widget" checked={config.github?.statsWidget ?? true} onChange={(v) => updateNested(['github', 'statsWidget'], v)} />
+                        <Toggle
+                            label="Show Stats Widget"
+                            checked={config.github?.statsWidget ?? true}
+                            onChange={(v) => {
+                                if (!config.github?.username) {
+                                    alert("Please set a GitHub username first.");
+                                    return;
+                                }
+                                updateNested(['github', 'statsWidget'], v);
+                            }}
+                        />
                     </div>
                 </div>
 
