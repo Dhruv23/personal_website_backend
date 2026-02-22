@@ -186,9 +186,9 @@ export const ProfileCard = () => {
                     />
                     {/* Avatar Decoration */}
                     <img
-                        src="https://cdn.discordapp.com/avatar-decorations/478704937501458432/a_62e8c50b3f9422e669ec20dd000e85c9.png"
+                        src="https://cdn.discordapp.com/avatar-decoration-presets/a_62e8c50b3f9422e669ec20dd000e85c9.png"
                         alt="Decoration"
-                        className="absolute w-[120%] h-[120%] -top-[10%] -left-[10%] pointer-events-none z-20"
+                        className="absolute -top-[7%] left-0 w-[114%] max-w-none pointer-events-none z-20"
                     />
                     <div className={cn(
                         "absolute bottom-2 right-2 w-6 h-6 rounded-full border-2 border-[#0f172a] z-30",
