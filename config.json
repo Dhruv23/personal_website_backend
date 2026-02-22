@@ -11,7 +11,8 @@
     "description": ["Full-Stack Developer", "UI/UX Designer", "Synthwave Enthusiast"],
     "location": "Cyberspace",
     "discordId": "306560934149226496",
-    "useDiscordAvatar": true
+    "useDiscordAvatar": true,
+    "offlineStatus": "grinding irl"
   },
   "theme": {
     "profileOpacity": 60,

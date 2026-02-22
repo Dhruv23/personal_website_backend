@@ -111,7 +111,7 @@ export const ProfileCard = () => {
         if (lanyardData.discord_status === 'offline') {
              return {
                 type: 'offline',
-                name: 'grinding irl',
+                name: user.offlineStatus || 'grinding irl',
                 details: '',
                 state: '',
                 image: null,
@@ -159,7 +159,7 @@ export const ProfileCard = () => {
             emoji: null
         };
 
-    }, [lanyardData]);
+    }, [lanyardData, user]);
 
     const cardContent = (
         <div
@@ -189,11 +189,11 @@ export const ProfileCard = () => {
                         <img
                             src={`https://cdn.discordapp.com/avatar-decorations/${lanyardData.discord_user.id}/${lanyardData.discord_user.avatar_decoration_data.asset}.png`}
                             alt="Decoration"
-                            className="absolute w-[120%] h-[120%] -top-[10%] -left-[10%] pointer-events-none z-20"
+                            className="absolute inset-0 w-full h-full scale-[1.2] pointer-events-none z-20"
                         />
                     )}
                     <div className={cn(
-                        "absolute bottom-2 right-2 w-6 h-6 rounded-full border-2 border-[#0f172a]",
+                        "absolute bottom-2 right-2 w-6 h-6 rounded-full border-2 border-[#0f172a] z-30",
                         statusColor
                     )} />
                 </div>

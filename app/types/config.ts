@@ -12,6 +12,7 @@ export interface UserConfig {
   location: string;
   discordId: string;
   useDiscordAvatar: boolean;
+  offlineStatus: string;
 }
 
 export interface ThemeColors {
