@@ -22,6 +22,10 @@ export interface LanyardData {
     id: string;
     discriminator: string;
     avatar: string;
+    avatar_decoration_data: {
+      asset: string;
+      sku_id: string;
+    } | null;
   };
   discord_status: string;
   activities: Array<{
@@ -39,6 +43,11 @@ export interface LanyardData {
     timestamps: {
       start: number;
       end?: number;
+    };
+    emoji?: {
+      name: string;
+      id?: string;
+      animated?: boolean;
     };
   }>;
   active_on_discord_web: boolean;
