@@ -30,19 +30,29 @@
       "glow": true,
       "backgroundBlur": true,
       "animatedTitle": true,
-      "monochromeIcons": false
+      "monochromeIcons": false,
+      "tilt": true,
+      "weather": "none",
+      "visualizer": true
     }
   },
   "socials": [
     { "platform": "github", "url": "https://github.com/adhrin", "icon": "Github" },
     { "platform": "discord", "url": "https://discord.gg/adhrin", "icon": "Discord" },
     { "platform": "youtube", "url": "https://youtube.com/@adhrin", "icon": "Youtube" },
-    { "platform": "twitter", "url": "https://twitter.com/adhrin", "icon": "Twitter" }
+    { "platform": "tiktok", "url": "https://tiktok.com/@adhrin", "icon": "TikTok" }
   ],
   "music": {
     "enabled": true,
     "volume": 0.5,
     "autoplay": false,
-    "url": "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3"
+    "url": "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3",
+    "songTitle": "Neon Dreams",
+    "albumIconUrl": ""
+  },
+  "github": {
+    "username": "adhrin",
+    "repos": [],
+    "statsWidget": true
   }
 }
