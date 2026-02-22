@@ -1,17 +1,31 @@
 'use client';
 
 import { Background } from './components/Background';
+import { ParticlesBackground } from './components/ParticlesBackground';
 import { ProfileCard } from './components/ProfileCard';
 import { MusicPlayer, VolumeControl } from './components/MusicPlayer';
+import { GitHubStats } from './components/GitHubStats';
+import { Guestbook } from './components/Guestbook';
 import Link from 'next/link';
 
 export default function Home() {
   return (
-    <main className="relative flex min-h-screen flex-col items-center justify-center p-4 overflow-hidden">
+    <main className="relative flex min-h-screen flex-col items-center justify-start p-4 overflow-x-hidden scroll-smooth">
       <Background />
+      <ParticlesBackground />
       <VolumeControl />
 
-      <ProfileCard />
+      <div className="z-10 flex flex-col items-center w-full max-w-4xl gap-12 mt-24 mb-40">
+        <ProfileCard />
+
+        <div className="w-full flex justify-center">
+            <GitHubStats />
+        </div>
+
+        <div className="w-full flex justify-center">
+            <Guestbook />
+        </div>
+      </div>
 
       <div className="absolute top-4 right-4 z-40">
         <Link

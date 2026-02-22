@@ -1,6 +1,7 @@
 'use client';
 
 import { useConfig } from '../contexts/ConfigContext';
+import { useMusic } from '../contexts/MusicContext';
 import { useLanyard } from '../hooks/useLanyard';
 import { cn } from '../lib/utils';
 import { motion } from 'framer-motion';
@@ -8,6 +9,7 @@ import { FaDiscord, FaGithub, FaYoutube, FaSpotify, FaTiktok, FaTwitter, FaTwitc
 import { FiMapPin } from 'react-icons/fi';
 import { Eye } from 'lucide-react';
 import { useState, useEffect } from 'react';
+import Tilt from 'react-parallax-tilt';
 
 const Typewriter = ({ texts }: { texts: string[] }) => {
   const [displayText, setDisplayText] = useState('');
@@ -75,6 +77,7 @@ const Typewriter = ({ texts }: { texts: string[] }) => {
 export const ProfileCard = () => {
     const { config } = useConfig();
     const { user, theme, socials } = config;
+    const { isPlaying } = useMusic();
     const lanyardData = useLanyard(user.discordId);
 
     const getSocialIcon = (platform: string) => {
@@ -101,13 +104,10 @@ export const ProfileCard = () => {
 
     const statusColor = lanyardData ? getStatusColor(lanyardData.discord_status) : 'bg-gray-500';
 
-    return (
-        <motion.div
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.5 }}
+    const cardContent = (
+        <div
             className={cn(
-                "relative z-10 w-full max-w-md p-6 rounded-2xl border border-white/10 shadow-2xl backdrop-blur-md overflow-hidden",
+                "relative z-10 w-full p-6 rounded-2xl border border-white/10 shadow-2xl backdrop-blur-md overflow-hidden",
                 theme.effects.glow && "shadow-[0_0_50px_-12px_rgba(217,70,239,0.5)] border-pink-500/20"
             )}
             style={{
@@ -115,7 +115,7 @@ export const ProfileCard = () => {
             }}
         >
             {/* Header Avatar */}
-            <div className="flex flex-col items-center">
+            <div className="flex flex-col items-center relative z-10">
                 <div className="relative group">
                     <img
                         src={(user.useDiscordAvatar && lanyardData?.discord_user?.avatar)
@@ -157,7 +157,7 @@ export const ProfileCard = () => {
 
             {/* Discord Status / Activity */}
             {lanyardData && lanyardData.activities && lanyardData.activities.filter(a => a.type !== 4).length > 0 && (
-                 <div className="mt-6 p-3 rounded-lg bg-black/30 border border-white/5 flex items-center gap-3">
+                 <div className="mt-6 p-3 rounded-lg bg-black/30 border border-white/5 flex items-center gap-3 relative z-10">
                      {lanyardData.activities.find(a => a.type !== 4)?.assets?.large_image ? (
                         <img
                             src={
@@ -182,7 +182,7 @@ export const ProfileCard = () => {
             )}
 
             {/* Social Links */}
-            <div className="mt-8 flex justify-center gap-4 flex-wrap">
+            <div className="mt-8 flex justify-center gap-4 flex-wrap relative z-10">
                 {socials.map((social, idx) => (
                     <a
                         key={idx}
@@ -200,11 +200,57 @@ export const ProfileCard = () => {
                 ))}
             </div>
 
+            {/* Visualizer at bottom */}
+            {theme.effects.visualizer && isPlaying && (
+                 <div className="absolute bottom-0 left-0 w-full h-16 flex items-end justify-center gap-1 opacity-40 pointer-events-none z-0 pb-0 px-6">
+                    {[...Array(30)].map((_, i) => (
+                        <motion.div
+                            key={i}
+                            animate={{ height: ["20%", "70%", "20%"] }}
+                            transition={{
+                                repeat: Infinity,
+                                duration: 0.8,
+                                ease: "easeInOut",
+                                delay: i * 0.05,
+                                repeatType: "reverse"
+                            }}
+                            className="w-2 bg-gradient-to-t from-pink-500/80 to-transparent rounded-t-sm"
+                        />
+                    ))}
+                 </div>
+            )}
+
             {/* Footer / Views */}
-            <div className="absolute bottom-3 left-4 flex items-center text-[10px] text-gray-500">
+            <div className="absolute bottom-3 left-4 flex items-center text-[10px] text-gray-500 z-10">
                 <Eye className="w-3 h-3 mr-1" />
                 <span>1,337 Views</span>
             </div>
+        </div>
+    );
+
+    return (
+        <motion.div
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.5 }}
+            className="w-full max-w-md perspective-1000"
+        >
+            {theme.effects.tilt ? (
+                <Tilt
+                    tiltMaxAngleX={5}
+                    tiltMaxAngleY={5}
+                    glareEnable={true}
+                    glareMaxOpacity={0.15}
+                    scale={1.02}
+                    transitionSpeed={2000}
+                    perspective={1000}
+                    className="w-full"
+                >
+                    {cardContent}
+                </Tilt>
+            ) : (
+                cardContent
+            )}
         </motion.div>
     );
 };

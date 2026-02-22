@@ -28,6 +28,9 @@ export interface ThemeEffects {
   backgroundBlur: boolean;
   animatedTitle: boolean;
   monochromeIcons: boolean;
+  tilt: boolean;
+  weather: 'none' | 'cherry' | 'snow' | 'matrix';
+  visualizer: boolean;
 }
 
 export interface ThemeConfig {
@@ -50,6 +53,27 @@ export interface MusicConfig {
   volume: number;
   autoplay: boolean;
   url: string;
+  songTitle?: string;
+  albumIconUrl?: string;
+}
+
+export interface GitHubRepo {
+  id: number;
+  name: string;
+  full_name: string;
+  html_url: string;
+  description: string | null;
+  stargazers_count: number;
+  forks_count: number;
+  language: string | null;
+  hidden: boolean;
+  order: number;
+}
+
+export interface GitHubConfig {
+  username: string;
+  repos: GitHubRepo[];
+  statsWidget: boolean;
 }
 
 export interface AppConfig {
@@ -58,4 +82,5 @@ export interface AppConfig {
   theme: ThemeConfig;
   socials: SocialLink[];
   music: MusicConfig;
+  github?: GitHubConfig;
 }

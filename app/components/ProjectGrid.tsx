@@ -2,9 +2,9 @@
 
 import { motion } from 'framer-motion';
 import { ExternalLink, Star, GitFork, Github } from 'lucide-react';
-import { Repo } from '../types/repo';
+import { GitHubRepo } from '../types/config';
 
-export const ProjectGrid = ({ repos }: { repos: Repo[] }) => {
+export const ProjectGrid = ({ repos }: { repos: GitHubRepo[] }) => {
     return (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 pb-24">
             {repos.map((repo, idx) => (
