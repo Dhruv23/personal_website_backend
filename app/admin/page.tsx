@@ -119,6 +119,7 @@ export default function Admin() {
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <Input label="Username" value={config.user.username} onChange={(v) => updateNested(['user', 'username'], v)} />
                             <Input label="Location" value={config.user.location} onChange={(v) => updateNested(['user', 'location'], v)} />
+                            <Input label="Offline Status Text" value={config.user.offlineStatus || ''} onChange={(v) => updateNested(['user', 'offlineStatus'], v)} />
 
                             <div>
                                 <Input label="Avatar URL" value={config.user.avatarUrl} onChange={(v) => updateNested(['user', 'avatarUrl'], v)} />
