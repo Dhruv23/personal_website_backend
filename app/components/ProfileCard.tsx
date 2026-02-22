@@ -8,7 +8,7 @@ import { motion } from 'framer-motion';
 import { FaDiscord, FaGithub, FaYoutube, FaSpotify, FaTiktok, FaTwitter, FaTwitch } from 'react-icons/fa';
 import { FiMapPin } from 'react-icons/fi';
 import { Eye } from 'lucide-react';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import Tilt from 'react-parallax-tilt';
 
 const Typewriter = ({ texts }: { texts: string[] }) => {
@@ -104,6 +104,63 @@ export const ProfileCard = () => {
 
     const statusColor = lanyardData ? getStatusColor(lanyardData.discord_status) : 'bg-gray-500';
 
+    const currentActivity = useMemo(() => {
+        if (!lanyardData) return null;
+
+        // 1. Offline Check
+        if (lanyardData.discord_status === 'offline') {
+             return {
+                type: 'offline',
+                name: 'grinding irl',
+                details: '',
+                state: '',
+                image: null,
+                applicationId: null,
+                emoji: null
+             };
+        }
+
+        // 2. Custom Status Check (Type 4)
+        const customStatus = lanyardData.activities.find(a => a.type === 4);
+        if (customStatus) {
+            return {
+                type: 'custom',
+                name: customStatus.state || 'Custom Status',
+                details: '',
+                state: '',
+                emoji: customStatus.emoji,
+                image: null,
+                applicationId: null
+            };
+        }
+
+        // 3. Game Activity Check (Type != 4)
+        const gameActivity = lanyardData.activities.find(a => a.type !== 4);
+        if (gameActivity) {
+            return {
+                type: 'activity',
+                name: gameActivity.name,
+                details: gameActivity.details,
+                state: gameActivity.state,
+                image: gameActivity.assets?.large_image,
+                applicationId: gameActivity.id,
+                emoji: null
+            };
+        }
+
+        // 4. Fallback (Online/Idle/DND)
+        return {
+            type: 'status',
+            name: lanyardData.discord_status.charAt(0).toUpperCase() + lanyardData.discord_status.slice(1),
+            details: '',
+            state: '',
+            image: null,
+            applicationId: null,
+            emoji: null
+        };
+
+    }, [lanyardData]);
+
     const cardContent = (
         <div
             className={cn(
@@ -127,6 +184,14 @@ export const ProfileCard = () => {
                             theme.effects.glow && "shadow-[0_0_30px_-5px_rgba(217,70,239,0.6)]"
                         )}
                     />
+                    {/* Avatar Decoration */}
+                    {lanyardData?.discord_user?.avatar_decoration_data?.asset && (
+                        <img
+                            src={`https://cdn.discordapp.com/avatar-decorations/${lanyardData.discord_user.id}/${lanyardData.discord_user.avatar_decoration_data.asset}.png`}
+                            alt="Decoration"
+                            className="absolute w-[120%] h-[120%] -top-[10%] -left-[10%] pointer-events-none z-20"
+                        />
+                    )}
                     <div className={cn(
                         "absolute bottom-2 right-2 w-6 h-6 rounded-full border-2 border-[#0f172a]",
                         statusColor
@@ -156,27 +221,39 @@ export const ProfileCard = () => {
             </div>
 
             {/* Discord Status / Activity */}
-            {lanyardData && lanyardData.activities && lanyardData.activities.filter(a => a.type !== 4).length > 0 && (
+            {currentActivity && (
                  <div className="mt-6 p-3 rounded-lg bg-black/30 border border-white/5 flex items-center gap-3 relative z-10">
-                     {lanyardData.activities.find(a => a.type !== 4)?.assets?.large_image ? (
+                     {currentActivity.image ? (
                         <img
                             src={
-                                lanyardData.activities.find(a => a.type !== 4)?.assets?.large_image?.startsWith('mp:')
-                                ? lanyardData.activities.find(a => a.type !== 4)?.assets?.large_image?.replace('mp:', 'https://media.discordapp.net/')
-                                : `https://cdn.discordapp.com/app-assets/${lanyardData.activities.find(a => a.type !== 4)?.id}/${lanyardData.activities.find(a => a.type !== 4)?.assets?.large_image}.png`
+                                currentActivity.image.startsWith('mp:')
+                                ? currentActivity.image.replace('mp:', 'https://media.discordapp.net/')
+                                : `https://cdn.discordapp.com/app-assets/${currentActivity.applicationId}/${currentActivity.image}.png`
                             }
                             alt="Activity"
                             className="w-12 h-12 rounded-md object-cover"
                         />
+                     ) : currentActivity.emoji ? (
+                         <div className="w-12 h-12 rounded-md bg-white/10 flex items-center justify-center shrink-0 text-2xl">
+                             {currentActivity.emoji.id ? (
+                                <img
+                                    src={`https://cdn.discordapp.com/emojis/${currentActivity.emoji.id}.${currentActivity.emoji.animated ? 'gif' : 'png'}`}
+                                    className="w-8 h-8"
+                                    alt={currentActivity.emoji.name}
+                                />
+                             ) : (
+                                <span>{currentActivity.emoji.name}</span>
+                             )}
+                         </div>
                      ) : (
                         <div className="w-12 h-12 rounded-md bg-white/10 flex items-center justify-center shrink-0">
                             <FaDiscord className="text-2xl text-white/50" />
                         </div>
                      )}
                      <div className="flex-1 overflow-hidden min-w-0">
-                        <p className="text-xs font-bold text-white truncate">{lanyardData.activities.find(a => a.type !== 4)?.name}</p>
-                        <p className="text-xs text-gray-400 truncate">{lanyardData.activities.find(a => a.type !== 4)?.state}</p>
-                        <p className="text-xs text-gray-500 truncate">{lanyardData.activities.find(a => a.type !== 4)?.details}</p>
+                        <p className="text-xs font-bold text-white truncate">{currentActivity.name}</p>
+                        {currentActivity.state && <p className="text-xs text-gray-400 truncate">{currentActivity.state}</p>}
+                        {currentActivity.details && <p className="text-xs text-gray-500 truncate">{currentActivity.details}</p>}
                      </div>
                  </div>
             )}
