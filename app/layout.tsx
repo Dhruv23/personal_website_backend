@@ -4,7 +4,6 @@ import './globals.css';
 import { ConfigProvider } from './contexts/ConfigContext';
 import { MusicProvider } from './contexts/MusicContext';
 import { getConfig } from './actions/config';
-import { CustomCursor } from './components/CustomCursor';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -25,7 +24,6 @@ export default async function RootLayout({
       <body className={inter.className}>
         <ConfigProvider initialConfig={initialConfig}>
           <MusicProvider>
-            <CustomCursor />
             {children}
           </MusicProvider>
         </ConfigProvider>

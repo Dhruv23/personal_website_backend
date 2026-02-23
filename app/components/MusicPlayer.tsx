@@ -5,7 +5,7 @@ import { useMusic } from '../contexts/MusicContext';
 import { useLanyard } from '../hooks/useLanyard';
 import { cn } from '../lib/utils';
 import { motion } from 'framer-motion';
-import { Play, Pause, SkipForward, SkipBack, Volume2, VolumeX, Volume1, RefreshCcw } from 'lucide-react';
+import { Play, Pause, Volume2, VolumeX, Volume1, RefreshCcw } from 'lucide-react';
 import { useState, useEffect, useRef } from 'react';
 
 export const VolumeControl = () => {
@@ -202,11 +202,9 @@ export const MusicPlayer = () => {
             {/* Controls (only for local) */}
             {!syncSpotify && (
                 <div className="flex items-center gap-1 text-white">
-                    <button className="p-1 hover:text-pink-500 transition-colors"><SkipBack size={16} /></button>
                     <button onClick={togglePlay} className="p-1 hover:text-pink-500 transition-colors">
                         {isPlaying ? <Pause size={20} fill="currentColor" /> : <Play size={20} fill="currentColor" />}
                     </button>
-                    <button className="p-1 hover:text-pink-500 transition-colors"><SkipForward size={16} /></button>
                 </div>
             )}
         </motion.div>
