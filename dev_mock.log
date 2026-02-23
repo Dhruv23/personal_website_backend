@@ -24,7 +24,7 @@ Supabase Config Fetch Error: {
   code: ''
 }
  GET / 200 in 9.2s (compile: 8.3s, render: 954ms)
-GITHUB_PAT is missing
+A_GITHUB_PAT is missing
  POST / 200 in 94ms (compile: 19ms, render: 75ms)
 Error fetching guestbook: {
   message: 'TypeError: fetch failed',

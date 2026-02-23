@@ -44,7 +44,7 @@ export const MusicPlayer = () => {
 
     // Determine metadata
     const songTitle = (syncSpotify && isSpotifyActive) ? lanyard?.spotify?.song : (music.songTitle || 'Neon Nights');
-    const artist = (syncSpotify && isSpotifyActive) ? lanyard?.spotify?.artist : 'Retro Wave';
+    const artist = (syncSpotify && isSpotifyActive) ? lanyard?.spotify?.artist : 'Faded';
     const albumArt = (syncSpotify && isSpotifyActive) ? lanyard?.spotify?.album_art_url : (music.albumIconUrl || undefined);
 
     useEffect(() => {
@@ -60,7 +60,7 @@ export const MusicPlayer = () => {
                 audioRef.current = new Audio(music.url);
                 audioRef.current.loop = true;
             } else if (audioRef.current.src !== music.url) {
-                 audioRef.current.src = music.url;
+                audioRef.current.src = music.url;
             }
 
             const audio = audioRef.current;
@@ -75,7 +75,7 @@ export const MusicPlayer = () => {
             audio.addEventListener('ended', onEnded);
 
             if (music.autoplay && !syncSpotify && !isPlaying) {
-                 audio.play().then(() => setIsPlaying(true)).catch(() => {});
+                audio.play().then(() => setIsPlaying(true)).catch(() => { });
             }
 
             return () => {
@@ -99,11 +99,11 @@ export const MusicPlayer = () => {
         if (!syncSpotify || !lanyard?.spotify) return;
 
         const interval = setInterval(() => {
-             const start = lanyard.spotify?.timestamps.start || 0;
-             const end = lanyard.spotify?.timestamps.end || 1;
-             const now = Date.now();
-             const progress = Math.min(100, Math.max(0, ((now - start) / (end - start)) * 100));
-             setSpotifyProgress(progress);
+            const start = lanyard.spotify?.timestamps.start || 0;
+            const end = lanyard.spotify?.timestamps.end || 1;
+            const now = Date.now();
+            const progress = Math.min(100, Math.max(0, ((now - start) / (end - start)) * 100));
+            setSpotifyProgress(progress);
         }, 1000);
 
         return () => clearInterval(interval);
@@ -157,21 +157,21 @@ export const MusicPlayer = () => {
 
             <div className="flex-1 min-w-0">
                 <div className="flex justify-between items-end mb-1">
-                     <div className="truncate pr-2 max-w-[70%]">
+                    <div className="truncate pr-2 max-w-[70%]">
                         <p className="text-sm font-bold text-white truncate">{songTitle}</p>
                         <p className="text-xs text-gray-400 truncate">{artist}</p>
-                     </div>
-                     {/* Spotify Sync Button */}
-                     <button
+                    </div>
+                    {/* Spotify Sync Button */}
+                    <button
                         onClick={() => setSyncSpotify(!syncSpotify)}
                         className={cn(
                             "p-1.5 rounded-full transition-colors",
                             syncSpotify && isSpotifyActive ? "bg-green-500 text-black" : "bg-white/10 text-gray-400 hover:text-white"
                         )}
                         title="Sync with Spotify"
-                     >
+                    >
                         <RefreshCcw size={12} className={cn(syncSpotify && isSpotifyActive && "animate-spin")} />
-                     </button>
+                    </button>
                 </div>
 
                 {/* Scrubber (only for local) */}
@@ -191,10 +191,10 @@ export const MusicPlayer = () => {
                 )}
                 {syncSpotify && isSpotifyActive && (
                     <div className="h-1 w-full bg-white/10 rounded-full overflow-hidden mt-2">
-                         <div
+                        <div
                             className="h-full bg-green-500 transition-all duration-1000 ease-linear"
                             style={{ width: `${spotifyProgress}%` }}
-                         />
+                        />
                     </div>
                 )}
             </div>

@@ -10,7 +10,7 @@ Create a `.env.local` file in the root of your project and add the following key
 ```env
 NEXT_PUBLIC_SUPABASE_URL=your_project_url
 NEXT_PUBLIC_SUPABASE_ANON_KEY=your_anon_key
-GITHUB_PAT=your_github_pat
+A_GITHUB_PAT=your_A_GITHUB_PAT
 ```
 
 ## 3. Database Schema
@@ -51,7 +51,7 @@ INSERT INTO site_config (data) VALUES ('{
     "status": "Building the future",
     "avatarUrl": "https://avatars.githubusercontent.com/u/1024025?v=4",
     "description": ["Full-Stack Developer", "UI/UX Designer", "Synthwave Enthusiast"],
-    "location": "Cyberspace",
+    "location": "Santa Clara, CA",
     "discordId": "306560934149226496",
     "useDiscordAvatar": true
   },

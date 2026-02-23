@@ -2,7 +2,7 @@
 
 import { GitHubRepo } from '../types/config';
 
-const GITHUB_PAT = process.env.GITHUB_PAT;
+const A_GITHUB_PAT = process.env.A_GITHUB_PAT;
 
 export interface GitHubStatsData {
   contributions: number;
@@ -11,8 +11,8 @@ export interface GitHubStatsData {
 }
 
 export async function getGitHubStats(username: string): Promise<GitHubStatsData | null> {
-  if (!GITHUB_PAT) {
-    console.error("GITHUB_PAT is missing");
+  if (!A_GITHUB_PAT) {
+    console.error("A_GITHUB_PAT is missing");
     return null;
   }
 
@@ -47,7 +47,7 @@ export async function getGitHubStats(username: string): Promise<GitHubStatsData 
     const res = await fetch('https://api.github.com/graphql', {
       method: 'POST',
       headers: {
-        Authorization: `Bearer ${GITHUB_PAT}`,
+        Authorization: `Bearer ${A_GITHUB_PAT}`,
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({ query, variables: { username } }),
@@ -58,7 +58,7 @@ export async function getGitHubStats(username: string): Promise<GitHubStatsData 
     if (!data || !data.user) return null;
 
     const contributions = data.user.contributionsCollection.contributionCalendar.totalContributions;
-    
+
     let totalStars = 0;
     const languageCounts: Record<string, { count: number; color: string }> = {};
 
@@ -96,37 +96,37 @@ export async function getGitHubStats(username: string): Promise<GitHubStatsData 
 }
 
 export async function getGitHubRepos(username: string): Promise<GitHubRepo[]> {
-    if (!GITHUB_PAT) {
-        console.error("GITHUB_PAT is missing");
-        return [];
-    }
+  if (!A_GITHUB_PAT) {
+    console.error("A_GITHUB_PAT is missing");
+    return [];
+  }
 
-    try {
-        const res = await fetch(`https://api.github.com/users/${username}/repos?per_page=100&sort=pushed`, {
-            headers: {
-                Authorization: `Bearer ${GITHUB_PAT}`,
-                'Accept': 'application/vnd.github.v3+json'
-            },
-            next: { revalidate: 3600 }
-        });
-        
-        if (!res.ok) return [];
+  try {
+    const res = await fetch(`https://api.github.com/users/${username}/repos?per_page=100&sort=pushed`, {
+      headers: {
+        Authorization: `Bearer ${A_GITHUB_PAT}`,
+        'Accept': 'application/vnd.github.v3+json'
+      },
+      next: { revalidate: 3600 }
+    });
 
-        const repos = await res.json();
-        return repos.map((repo: any) => ({
-            id: repo.id,
-            name: repo.name,
-            full_name: repo.full_name,
-            html_url: repo.html_url,
-            description: repo.description,
-            stargazers_count: repo.stargazers_count,
-            forks_count: repo.forks_count,
-            language: repo.language,
-            hidden: false,
-            order: 0
-        }));
-    } catch (error) {
-        console.error("Error fetching repos:", error);
-        return [];
-    }
+    if (!res.ok) return [];
+
+    const repos = await res.json();
+    return repos.map((repo: any) => ({
+      id: repo.id,
+      name: repo.name,
+      full_name: repo.full_name,
+      html_url: repo.html_url,
+      description: repo.description,
+      stargazers_count: repo.stargazers_count,
+      forks_count: repo.forks_count,
+      language: repo.language,
+      hidden: false,
+      order: 0
+    }));
+  } catch (error) {
+    console.error("Error fetching repos:", error);
+    return [];
+  }
 }
