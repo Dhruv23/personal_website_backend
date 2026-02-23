@@ -10,7 +10,7 @@ const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
   title: 'Adhrin - Portfolio',
-  description: 'Full-stack Developer & UI/UX Designer',
+  description: 'Embedded software engineer with a passion for creating innovative solutions. Explore my projects, skills, and experience in the world of software development.',
 };
 
 export default async function RootLayout({
