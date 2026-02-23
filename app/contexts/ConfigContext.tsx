@@ -2,7 +2,7 @@
 
 import React, { createContext, useContext, useState, ReactNode } from 'react';
 import { AppConfig } from '../types/config';
-import { updateConfig as updateServerConfig } from '../actions/config';
+import { supabase } from '../lib/supabase';
 
 interface ConfigContextType {
   config: AppConfig;
@@ -32,8 +32,31 @@ export const ConfigProvider = ({
 
   const saveConfig = async () => {
     try {
-        const success = await updateServerConfig(config);
-        return success;
+        // We assume there is only one row, id: 1 (or the first one created)
+        // First, get the ID of the config row
+        const { data: currentData } = await supabase
+            .from('site_config')
+            .select('id')
+            .limit(1)
+            .single();
+
+        if (!currentData) {
+            // Create if doesn't exist
+            const { error } = await supabase
+                .from('site_config')
+                .insert({ data: config });
+
+            if (error) throw error;
+        } else {
+            // Update
+            const { error } = await supabase
+                .from('site_config')
+                .update({ data: config, updated_at: new Date().toISOString() })
+                .eq('id', currentData.id);
+
+            if (error) throw error;
+        }
+        return true;
     } catch (e) {
         console.error("Failed to save config:", e);
         return false;

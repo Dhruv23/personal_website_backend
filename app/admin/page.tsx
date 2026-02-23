@@ -2,16 +2,42 @@
 
 import { useConfig } from '../contexts/ConfigContext';
 import { Background } from '../components/Background';
-import { useState } from 'react';
-import { RefreshCw, Save, Upload, Github, Trash2, Plus } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { RefreshCw, Save, Upload, Github, Trash2, Plus, LogOut } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import { getGitHubRepos } from '../actions/github';
+import Login from './Login';
+import { Session } from '@supabase/supabase-js';
 
 export default function Admin() {
     const { config, updateConfig, resetConfig, saveConfig } = useConfig();
     const [saving, setSaving] = useState(false);
     const [uploading, setUploading] = useState<string | null>(null);
     const [loadingRepos, setLoadingRepos] = useState(false);
+    const [session, setSession] = useState<Session | null>(null);
+    const [loadingAuth, setLoadingAuth] = useState(true);
+
+    useEffect(() => {
+        // Check for existing session
+        supabase.auth.getSession().then(({ data: { session } }) => {
+            setSession(session);
+            setLoadingAuth(false);
+        });
+
+        // Listen for auth changes
+        const {
+            data: { subscription },
+        } = supabase.auth.onAuthStateChange((_event, session) => {
+            setSession(session);
+            setLoadingAuth(false);
+        });
+
+        return () => subscription.unsubscribe();
+    }, []);
+
+    const handleLogout = async () => {
+        await supabase.auth.signOut();
+    };
 
     const handleSave = async () => {
         setSaving(true);
@@ -86,6 +112,18 @@ export default function Admin() {
         setLoadingRepos(false);
     };
 
+    if (loadingAuth) {
+        return (
+            <main className="relative min-h-screen w-full flex items-center justify-center bg-black">
+                <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-pink-500"></div>
+            </main>
+        );
+    }
+
+    if (!session) {
+        return <Login />;
+    }
+
     return (
         <main className="relative min-h-screen w-full flex flex-col p-8 overflow-x-hidden">
             <Background />
@@ -94,6 +132,12 @@ export default function Admin() {
                 <div className="flex flex-col md:flex-row items-center justify-between mb-8 gap-4 sticky top-0 bg-black/80 p-4 rounded-xl border border-white/5 z-20 backdrop-blur-md">
                     <h1 className="text-3xl font-bold text-white">Admin Dashboard</h1>
                     <div className="flex gap-4">
+                        <button
+                            onClick={handleLogout}
+                            className="flex items-center gap-2 px-4 py-2 rounded-lg bg-white/5 text-gray-400 hover:bg-white/10 hover:text-white transition-colors"
+                        >
+                            <LogOut size={16} /> Sign Out
+                        </button>
                         <button
                             onClick={resetConfig}
                             className="flex items-center gap-2 px-4 py-2 rounded-lg bg-red-500/10 text-red-400 hover:bg-red-500/20 transition-colors"
