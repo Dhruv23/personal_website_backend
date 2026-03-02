@@ -3,10 +3,23 @@ import ytdl from '@distube/ytdl-core';
 
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
-  const url = searchParams.get('url');
+  const rawUrl = searchParams.get('url');
   const format = searchParams.get('format') || 'mp3';
 
-  if (!url || !ytdl.validateURL(url)) {
+  if (!rawUrl) {
+    return NextResponse.json(
+      { error: 'Missing YouTube URL' },
+      { status: 400 }
+    );
+  }
+
+  let cleanUrl: string;
+  try {
+    // Extracting just the video ID guarantees ALL playlist, radio, and tracking params are stripped
+    const videoId = ytdl.getURLVideoID(rawUrl);
+    cleanUrl = `https://www.youtube.com/watch?v=${videoId}`;
+  } catch (error) {
+    // getURLVideoID throws an error if it cannot find a valid video ID
     return NextResponse.json(
       { error: 'Invalid or missing YouTube URL' },
       { status: 400 }
@@ -14,7 +27,8 @@ export async function GET(request: Request) {
   }
 
   try {
-    const info = await ytdl.getInfo(url);
+    // Pass the cleaned URL to getInfo
+    const info = await ytdl.getInfo(cleanUrl);
     const title = info.videoDetails.title.replace(/[^\w\s-]/gi, ''); // Sanitize title
 
     const isAudio = format === 'mp3';
@@ -22,7 +36,9 @@ export async function GET(request: Request) {
     // Choose streaming options based on format requested
     const filter = isAudio ? 'audioonly' : 'audioandvideo';
     const quality = isAudio ? 'highestaudio' : 'highest';
-    const stream = ytdl(url, { quality, filter });
+
+    // Use the cleaned URL for the stream as well
+    const stream = ytdl(cleanUrl, { quality, filter });
 
     const headers = new Headers();
     const filename = `${title}.${format}`;
