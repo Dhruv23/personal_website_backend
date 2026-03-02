@@ -7,7 +7,7 @@ import { RefreshCw, Save, Upload, Github, Trash2, Plus, LogOut } from 'lucide-re
 import { supabase } from '../lib/supabase';
 import { getGitHubRepos } from '../actions/github';
 import Login from './Login';
-import { Session } from '@supabase/supabase-js';
+import { AuthChangeEvent, Session } from '@supabase/supabase-js';
 
 export default function Admin() {
     const { config, updateConfig, resetConfig, saveConfig } = useConfig();
@@ -27,10 +27,10 @@ export default function Admin() {
 
         fetchSession();
 
-        // Listen for auth changes
+        // Listen for auth changes with explicitly typed parameters
         const {
             data: { subscription },
-        } = supabase.auth.onAuthStateChange((_event, session) => {
+        } = supabase.auth.onAuthStateChange((_event: AuthChangeEvent, session: Session | null) => {
             setSession(session);
             setLoadingAuth(false);
         });
