@@ -67,7 +67,7 @@ export const GitHubStats = () => {
             <div key={idx} className="flex flex-col gap-1">
               <div className="flex justify-between text-xs text-gray-300">
                 <span>{lang.name}</span>
-                <span>{Math.round(lang.percentage)}%</span> // Actually I didn't verify percentage logic in action fully, it was count/totalRepos.
+                <span>{Math.round(lang.percentage)}%</span>
               </div>
               <div className="h-1.5 w-full bg-white/10 rounded-full overflow-hidden">
                 <motion.div
