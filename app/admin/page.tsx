@@ -19,10 +19,13 @@ export default function Admin() {
 
     useEffect(() => {
         // Check for existing session
-        supabase.auth.getSession().then(({ data: { session } }) => {
-            setSession(session);
+        const fetchSession = async () => {
+            const { data } = await supabase.auth.getSession();
+            setSession(data.session);
             setLoadingAuth(false);
-        });
+        };
+
+        fetchSession();
 
         // Listen for auth changes
         const {
