@@ -4,7 +4,34 @@ import { supabase } from '../lib/supabase';
 import { AppConfig } from '../types/config';
 import defaultConfig from '../../config.json';
 
+// Deep merge utility to ensure we don't lose nested properties
+// when the database JSON is missing newer schema additions
+function mergeConfigs(defaultConf: any, dbConf: any): AppConfig {
+  if (!dbConf) return defaultConf as AppConfig;
+
+  const merged = { ...defaultConf };
+
+  for (const key in merged) {
+    if (dbConf.hasOwnProperty(key)) {
+      if (typeof dbConf[key] === 'object' && dbConf[key] !== null && !Array.isArray(dbConf[key])) {
+        // Deep merge for nested objects (like user, theme, etc)
+        merged[key] = { ...defaultConf[key], ...dbConf[key] };
+      } else {
+        // Direct assignment for primitives and arrays
+        merged[key] = dbConf[key];
+      }
+    }
+  }
+
+  return merged as AppConfig;
+}
+
 export async function getConfig(): Promise<AppConfig> {
+  if (!supabase) {
+    console.warn('Supabase client not initialized. Falling back to default config.');
+    return defaultConfig as unknown as AppConfig;
+  }
+
   const { data, error } = await supabase
     .from('site_config')
     .select('data')
@@ -18,10 +45,12 @@ export async function getConfig(): Promise<AppConfig> {
     return defaultConfig as unknown as AppConfig;
   }
 
-  return data.data as AppConfig;
+  return mergeConfigs(defaultConfig, data.data);
 }
 
 export async function updateConfig(newConfig: AppConfig): Promise<boolean> {
+  if (!supabase) return false;
+
   // We assume there is only one row, id: 1 (or the first one created)
   // First, get the ID of the config row
   const { data: currentData } = await supabase
