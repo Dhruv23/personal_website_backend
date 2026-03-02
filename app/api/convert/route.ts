@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import ytdl from 'ytdl-core';
+import ytdl from '@distube/ytdl-core';
 
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
@@ -42,9 +42,8 @@ export async function GET(request: Request) {
     return new Response(webStream, { headers });
   } catch (error: unknown) {
     console.error('YTDL Error:', error);
-    const message = error instanceof Error ? error.message : 'Unknown error';
     return NextResponse.json(
-      { error: 'Failed to process the video. ' + message },
+      { error: 'Failed to extract the video stream. YouTube may have restricted this video or the link is invalid.' },
       { status: 500 }
     );
   }
