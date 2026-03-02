@@ -121,7 +121,7 @@ export const ProfileCard = () => {
         }
 
         // 2. Custom Status Check (Type 4)
-        const customStatus = lanyardData.activities.find(a => a.type === 4);
+        const customStatus = lanyardData.activities?.find(a => a.type === 4);
         if (customStatus) {
             return {
                 type: 'custom',
@@ -135,7 +135,7 @@ export const ProfileCard = () => {
         }
 
         // 3. Game Activity Check (Type != 4)
-        const gameActivity = lanyardData.activities.find(a => a.type !== 4);
+        const gameActivity = lanyardData.activities?.find(a => a.type !== 4);
         if (gameActivity) {
             return {
                 type: 'activity',
@@ -151,7 +151,7 @@ export const ProfileCard = () => {
         // 4. Fallback (Online/Idle/DND)
         return {
             type: 'status',
-            name: lanyardData.discord_status.charAt(0).toUpperCase() + lanyardData.discord_status.slice(1),
+            name: lanyardData.discord_status ? lanyardData.discord_status.charAt(0).toUpperCase() + lanyardData.discord_status.slice(1) : 'Unknown',
             details: '',
             state: '',
             image: null,
